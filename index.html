@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valkyrie Biography</title>
+    <link rel="icon" type="image/png" href="assets/icon/icon.jpg">
+    
+    <style>
+        :root {
+            --primary: #2a6f97;
+            --dark: #013a63;
+            --bg-tint: rgba(3, 10, 18, 0.94); 
+            --card-bg: #0a141d; 
+            --text-main: #e2e8f0;
+            --text-muted: #8a99ad;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: url('assets/background/background.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-tint);
+            z-index: 0;
+        }
+
+        /* Music Controls */
+        #audio-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background: var(--card-bg);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 2px solid var(--primary);
+        }
+
+        #audio-btn {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #volume-slider {
+            width: 80px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Main Interface */
+        .interface-container {
+            position: relative;
+            z-index: 1;
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 650px;
+            border: 4px solid var(--primary);
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px; 
+            padding: 6px;
+            background: rgba(1, 58, 99, 0.3);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .tab-btn {
+            margin: 0;
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--text-muted);
+            padding: 12px 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            flex: 1 1 120px;
+            min-width: 100px;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 0 0 2px rgba(42, 111, 151, 0.35);
+            margin: 6px;
+        } 
+
+        .tab-btn:hover,
+        .tab-btn.active {
+            background: rgba(42, 111, 151, 0.15);
+            color: white;
+            border-color: #29c5ff;
+            box-shadow:
+                inset 0 0 0 2px #29c5ff,
+                0 0 10px rgba(41, 197, 255, 0.4);
+        }
+
+        /* Content-Areas */
+        .tab-content {
+            display: none;
+            padding: 30px;
+            min-height: 380px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* PROFILE TAB */
+        .profile-wrapper {
+            text-align: center;
+        }
+
+        .pfp {
+            width: 120px;
+            height: 120px;
+            border: 3px solid var(--primary);
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: white;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .divider {
+            height: 2px;
+            background: rgba(42, 111, 151, 0.4);
+            width: 80%;
+            margin: 15px auto;
+        }
+
+        .quote {
+            font-style: italic;
+            font-size: 15px;
+            color: var(--text-muted);
+            margin: 25px 0;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+        }
+
+        .location-box {
+            background: rgba(42, 111, 151, 0.1);
+            border: 1px solid var(--primary);
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .location-box p {
+            margin: 5px 0;
+        }
+        
+        .location-box span {
+            color: #29c5ff;
+            font-weight: bold;
+        }
+
+        /* Throne Area */
+        .throne-wrapper {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 2px solid rgba(42, 111, 151, 0.4);
+            text-align: center;
+        }
+
+        .throne-btn {
+            display: block;
+            background: #193675;
+            color: white;
+            text-decoration: none;
+            padding: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+            border: 2px solid white;
+            transition: background 0.2s;
+        }
+
+        .throne-btn:hover {
+            background: #000fe0;
+        }
+
+        /* WEEKLYS TAB */
+        .weeklys-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .weekly-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--primary);
+            padding: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .weekly-card:hover {
+            background: rgba(42, 111, 151, 0.15);
+        }
+
+        .song-card {
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .song-cover {
+            width: 55px;
+            height: 55px;
+            border: 1px solid var(--primary);
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #000;
+        }
+
+        .weekly-title {
+            font-size: 11px;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 3px;
+            letter-spacing: 1px;
+        }
+
+        .weekly-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .weekly-artist {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* HEAR ME OUT TAB */
+        .hmo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .hmo-slot {
+            aspect-ratio: 2/3; 
+            border: 2px solid var(--primary);
+            overflow: hidden;
+            background: rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            cursor: crosshair;
+        }
+
+        .hmo-slot:hover {
+            border-color: white;
+            transform: scale(1.02);
+        }
+
+        .hmo-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Mouse Tooltip for HMO */
+        #hmo-tooltip {
+            position: absolute;
+            background: rgba(3, 10, 18, 0.95);
+            color: white;
+            padding: 6px 12px;
+            border: 1px solid var(--primary);
+            font-size: 13px;
+            font-weight: bold;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.1s;
+            z-index: 1000;
+            white-space: nowrap;
+            box-shadow: 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        /* GAMES TAB */
+        .fav-game-box {
+            background: rgba(42, 111, 151, 0.2);
+            border-left: 4px solid var(--primary);
+            color: white;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .fav-game-box span {
+            color: #ffcc00;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .game-slot {
+            aspect-ratio: 3/4;
+            border: 2px solid var(--primary);
+            overflow: hidden;
+            cursor: pointer;
+            display: block;
+        }
+
+        .game-slot:hover {
+            border-color: white;
+        }
+
+        .game-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ACHIEVEMENTS TAB */
+        .achievement-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .achievement-item {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid var(--primary);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 15px;
+            width: 100%;
+            box-sizing: border-box;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .ach-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .ach-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        /* FOOTER CREDITS */
+        .footer-credits {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            font-size: 11px;
+            color: var(--text-muted);
+            z-index: 10;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-credits a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer-credits a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* MEDIA MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 10, 18, 0.95);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 5px;
+            max-width: 90%;
+            max-height: 80vh;
+            border: 2px solid var(--primary);
+        }
+
+        .modal-content video, .modal-content img {
+            max-width: 100%;
+            max-height: 75vh;
+            display: block;
+        }
+
+        @media (max-width: 550px) {
+            .weeklys-grid, .hmo-grid { grid-template-columns: 1fr; }
+            .games-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="audio-container">
+        <button id="audio-btn" onclick="toggleAudio()">▶</button>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.3" oninput="setVolume(this.value)">
+    </div>
+
+    <!-- Audio -->
+    <audio id="bgm" src="https://files.catbox.moe/f57la6.mp3" loop autoplay></audio>
+
+    <div class="interface-container">
+        
+        <nav>
+            <button class="tab-btn active" onclick="openTab(event, 'profile')">Profile</button>
+            <button class="tab-btn" onclick="openTab(event, 'games')">Games</button>
+            <button class="tab-btn" onclick="openTab(event, 'hear-me-out')">Hear me out</button>
+            <button class="tab-btn" onclick="openTab(event, 'weeklys')">Weeklys</button>
+            <button class="tab-btn" onclick="openTab(event, 'achievements')">Achievements</button>
+        </nav>
+
+        <div id="profile" class="tab-content active">
+            <div class="profile-wrapper">
+                <img src="assets/pfp/pfp.png" alt="Profile Picture" class="pfp">
+                <h1>Valkyrie</h1>
+                <div class="divider"></div>
+                <p class="quote">„Ich lasse Nacken knacken, ich gehe nackig kacken“</p>
+                
+                <div class="location-box">
+                    <p>📍 Location: <span>Germany</span></p>
+                    <p>🕒 Local Time: <span id="german-time">--:--:--</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="games" class="tab-content">
+            <div class="fav-game-box">
+                ⭐ Favorite Game: <span>Sims 3 (absolutely not cracked)</span>
+            </div>
+            <div class="games-grid">
+                <a href="https://overwatch.blizzard.com/" target="_blank" class="game-slot"><img src="assets/games/ow.jpg" alt="Overwatch"></a>
+                <a href="https://playvalorant.com/" target="_blank" class="game-slot"><img src="assets/games/val.jpg" alt="Valorant"></a>
+                <a href="https://store.steampowered.com/app/730/CounterStrike_2/" target="_blank" class="game-slot"><img src="assets/games/csgo.jpg" alt="CSGO/CS2"></a>
+                <a href="https://store.steampowered.com/app/359550/Tom_Clancys_Rainbow_Six_Siege/" target="_blank" class="game-slot"><img src="assets/games/r6.jpg" alt="Rainbow Six Siege"></a>
+                <a href="https://store.steampowered.com/app/381210/Dead_by_Daylight/" target="_blank" class="game-slot"><img src="assets/games/dbd.jpg" alt="Dead by Daylight"></a>
+                <a href="https://www.minecraft.net/" target="_blank" class="game-slot"><img src="assets/games/mc.jpg" alt="Minecraft"></a>
+                <a href="https://osu.ppy.sh/" target="_blank" class="game-slot"><img src="assets/games/osu.jpg" alt="osu!"></a>
+                <a href="https://www.leagueoflegends.com/" target="_blank" class="game-slot"><img src="assets/games/lol.jpg" alt="League of Legends"></a>
+                <a href="https://store.steampowered.com/app/264710/Subnautica/" target="_blank" class="game-slot"><img src="assets/games/sub.jpg" alt="Subnautica"></a>
+                <a href="https://store.steampowered.com/app/739630/Phasmophobia/" target="_blank" class="game-slot"><img src="assets/games/Phas.jpg" alt="Phasmophobia"></a>
+                <a href="https://store.steampowered.com/app/1938090/Call_of_Duty/" target="_blank" class="game-slot"><img src="assets/games/cod.jpg" alt="Call of Duty"></a>
+                <a href="https://store.steampowered.com/app/3164500/Schedule_I/" target="_blank" class="game-slot"><img src="assets/games/sd1.jpg" alt="Game 12"></a>
+                <a href="https://store.steampowered.com/app/242760/The_Forest/" target="_blank" class="game-slot"><img src="assets/games/tf.jpg" alt="The Forest"></a>
+                <a href="https://store.steampowered.com/app/1326470/Sons_Of_The_Forest/" target="_blank" class="game-slot"><img src="assets/games/sof.jpg" alt="Sons of the Forest"></a>
+                <a href="https://store.steampowered.com/app/346110/ARK_Survival_Evolved/" target="_blank" class="game-slot"><img src="assets/games/ark.jpg" alt="ARK"></a>
+                <a href="https://store.steampowered.com/app/594650/Hunt_Showdown/" target="_blank" class="game-slot"><img src="assets/games/hunt.jpg" alt="Hunt Showdown"></a>
+            </div>
+        </div>
+
+        <div id="hear-me-out" class="tab-content">
+            <div class="hmo-grid">
+                <div class="hmo-slot" data-name="Viego"><img src="assets/hearmeout/Viego.png" alt="Viego"></div>
+                <div class="hmo-slot" data-name="Shego"><img src="assets/hearmeout/shego.png" alt="Shego"></div>
+                <div class="hmo-slot" data-name="Tom Hiddleston"><img src="assets/hearmeout/Loki.png" alt="Tom Hiddleston"></div>
+                <div class="hmo-slot" data-name="Ghost"><img src="assets/hearmeout/ghost.png" alt="Ghost"></div>
+                <div class="hmo-slot" data-name="Domina"><img src="assets/hearmeout/domina.png" alt="Domina"></div>
+                <div class="hmo-slot" data-name="Pyramid Head"><img src="assets/hearmeout/phead.png" alt="Pyramid Head"></div>
+                <div class="hmo-slot" data-name="Leon Scott Kennedy"><img src="assets/hearmeout/leon.png" alt="Leon Scott Kennedy"></div>
+                <div class="hmo-slot" data-name="Bella Dimitrescu"><img src="assets/hearmeout/bella.png" alt="Bella Dimitrescu"></div>
+            </div>
+        </div>
+
+        <div id="weeklys" class="tab-content">
+            <div class="weeklys-grid">
+                
+                <!-- Song -->
+                <div class="weekly-card song-card" onclick="window.open('https://open.spotify.com/intl-de/track/091buHkBbGUQB1vZexxBDb', '_blank')">
+                    <img src="assets/weeklys/cover.jpg" alt="Song Cover" class="song-cover">
+                    <div>
+                        <div class="weekly-title">Song</div>
+                        <div class="weekly-value">Richman</div>
+                        <div class="weekly-artist">by 3OH!3</div>
+                    </div>
+                </div>
+                
+                <!-- Edit Preview -->
+                <div class="weekly-card song-card" onclick="openMediaModal('video', 'assets/weeklys/edit.mp4')">
+                    <video src="assets/weeklys/edit.mp4" class="song-cover" muted></video>
+                    <div>
+                        <div class="weekly-title">Edit</div>
+                        <div class="weekly-value">Fika</div>
+                    </div>
+                </div>
+
+                <!-- Artist -->
+                <div class="weekly-card song-card" onclick="openMediaModal('image', 'assets/weeklys/artist.png')">
+                    <img src="assets/weeklys/artist.png" alt="Artist Cover" class="song-cover">
+                    <div>
+                        <div class="weekly-title">Artist</div>
+                        <div class="weekly-value">Filow</div>
+                    </div>
+                </div>
+
+                <!-- Meme Preview -->
+                <div class="weekly-card song-card" onclick="openMediaModal('video', 'assets/weeklys/meme.mp4')">
+                    <video src="assets/weeklys/meme.mp4" class="song-cover" muted></video>
+                    <div>
+                        <div class="weekly-title">Meme</div>
+                        <div class="weekly-value">Oh Pwiencess</div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <div id="achievements" class="tab-content">
+            <div class="achievement-list">
+                <div class="achievement-item">
+                    <div class="ach-title">Metformin</div>
+                    <div class="ach-desc">Successfully avoided shitting myself for the last 24 hours</div>
+                </div>
+                <div class="achievement-item">
+                    <div class="ach-title">Aimbot</div>
+                    <div class="ach-desc">Successfully downloaded a virus again</div>
+                </div>
+                <div class="achievement-item">
+                    <div class="ach-title">Achieved 100%</div>
+                    <div class="ach-desc">Successfully going completely mental</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="throne-wrapper">
+            <a href="https://throne.com/eeveeless" target="_blank" class="throne-btn">My Wishlist</a>
+        </div>
+
+    </div>
+
+    <div class="footer-credits">
+        <a href="https://asukaa.de" target="_blank">Website Created by Asukaa</a>
+    </div>
+
+    <!-- Hmo Tooltip -->
+    <div id="hmo-tooltip"></div>
+
+    <div id="mediaModal" class="modal" onclick="closeMediaModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div id="modal-target"></div>
+        </div>
+    </div>
+
+<script>
+        const audio = document.getElementById('bgm');
+        const audioBtn = document.getElementById('audio-btn');
+
+        audio.volume = 0.3;
+
+        // Load Music First Start
+        window.addEventListener('DOMContentLoaded', () => {
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // Autoplay allowed
+                    audioBtn.innerText = "⏸";
+                }).catch(err => {
+                    // Autoplay not allowed
+                    console.log("Autoplay blockiert (Browser Policy). Warte auf ersten Klick...");
+                    audioBtn.innerText = "▶";
+                });
+            }
+        });
+
+        // Toggle Function
+        function toggleAudio() {
+            if (audio.paused) {
+                audio.play();
+                audioBtn.innerText = "⏸";
+            } else {
+                audio.pause();
+                audioBtn.innerText = "▶";
+            }
+        }
+
+        function setVolume(val) {
+            audio.volume = val;
+        }
+
+        // Klick Fallback 
+        window.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    audioBtn.innerText = "⏸";
+                }).catch(() => {});
+            }
+        }, { once: true }); // "once: true" Only trigger this event listener once, then remove it
+
+        // Tab Switcher
+        function openTab(evt, tabId) {
+            let tabcontent = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            let tablinks = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Live Local Time
+        function updateGermanTime() {
+            const timeSpan = document.getElementById('german-time');
+            if (timeSpan) {
+                const options = { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                timeSpan.innerText = new Intl.DateTimeFormat('de-DE', options).format(new Date()) + ' ';
+            }
+        }
+        setInterval(updateGermanTime, 1000);
+        updateGermanTime(); // Instant Update
+
+        // Hear Me Out Tooltip (Mouse Tracking)
+        const tooltip = document.getElementById('hmo-tooltip');
+        const hmoSlots = document.querySelectorAll('.hmo-slot');
+
+        hmoSlots.forEach(slot => {
+            slot.addEventListener('mousemove', (e) => {
+                tooltip.innerText = slot.getAttribute('data-name');
+                tooltip.style.left = (e.pageX + 15) + 'px';
+                tooltip.style.top = (e.pageY + 15) + 'px';
+                tooltip.style.opacity = '1';
+            });
+            slot.addEventListener('mouseleave', () => {
+                tooltip.style.opacity = '0';
+            });
+        });
+
+        // Modal for bigger Content
+        const modal = document.getElementById('mediaModal');
+        const modalTarget = document.getElementById('modal-target');
+
+        function openMediaModal(type, source) {
+            modalTarget.innerHTML = '';
+            if (type === 'video') {
+                modalTarget.innerHTML = `<video src="${source}" controls autoplay loop></video>`;
+            } else if (type === 'image') {
+                modalTarget.innerHTML = `<img src="${source}" alt="Zoomed Asset">`;
+            }
+            modal.style.display = 'flex';
+        }
+
+        function closeMediaModal() {
+            modal.style.display = 'none';
+            modalTarget.innerHTML = '';
+        }
+    </script>
+</body>
+</html>
